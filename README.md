@@ -1,5 +1,5 @@
 # ElementConfiguration
-
+<B>Check out the project live, <a href="http://mbp.link/element">here</a>.</b>
 <img src="http://i.imgur.com/el6v3t6.png"/>
 
 ElementConfiguration is both a program written in Java, and as a webpage. By only having a data sheet with the element name, abbreviation,
