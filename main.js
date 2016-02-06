@@ -120,20 +120,25 @@ function createInformation(information) {
     for (var i = 0; i < electrons; i++) {
         ob.putElectronInCurrentOrbital();
     }
-    var fullConfiguration = "";
     var splitConfiguration = new Array();
     var entrySet = ob.getOrbital().getEntrySet();
     for (var x = 0; x != entrySet.length; x++) {
         var e = entrySet[x];
         if (e.getValue() > 0) {
-            fullConfiguration = fullConfiguration + e.getKey() + e.getValue();
             splitConfiguration.push(e.getKey() + e.getValue());
         }
     }
-    var nobleGasConfiguration = ob.getNobleGasConfiguration(fullConfiguration);
-    var lazyConfiguration = getStringFromArray(ob.getLazyConfiguration(splitConfiguration));
+	var nobleGasConfiguration;
+	var nobleGasConfigurationArrayInformation = ob.getNobleGasConfiguration(splitConfiguration);
+	if(nobleGasConfigurationArrayInformation != 0){
+		nobleGasConfiguration = "[" + nobleGasConfigurationArrayInformation[0] + "] " + getStringFromArray(superScriptConfigurationArray(nobleGasConfigurationArrayInformation[1]));
+	}else{
+		nobleGasConfiguration = "Not available on this element";
+	}
+	
+    var lazyConfiguration = getStringFromArray(superScriptConfigurationArray(ob.getLazyConfiguration(splitConfiguration)));
 
-    $("#fullConfiguration").html(fullConfiguration);
+    $("#fullConfiguration").html(getStringFromArray(superScriptConfigurationArray(splitConfiguration)));
     $("#nobleGasConfiguration").html(nobleGasConfiguration);
     $("#lazyConfiguration").html(lazyConfiguration);
     $("#status").html("");
@@ -145,6 +150,31 @@ function createInformation(information) {
     canvas.width = 600;
     drawOrbitalDiagram(entrySet, splitConfiguration);
     $("#actualInformation").show();
+}
+
+function superScriptConfigurationArray(splitConfiguration){
+	var superScriptedArray = new Array();
+	for(var i =0; i != splitConfiguration.length;i++){
+		var rowEnergy = splitConfiguration[i];
+		var superScriptedRowEnergy = convertRowEnergyToSuperScript(rowEnergy);
+		superScriptedArray.push(superScriptedRowEnergy);
+	}
+	return superScriptedArray;
+}
+
+function convertRowEnergyToSuperScript(rowEnergy){
+	var blocks = ["s", "p", "d", "f"];
+	var valueIndex = 0;
+	for(var i =0; i != blocks.length;i++){
+		var currentBlock = blocks[i];
+		if(rowEnergy.indexOf(currentBlock) > -1){
+			valueIndex = (rowEnergy.indexOf(currentBlock))+1;
+		}
+	}
+	var value = rowEnergy.substring(valueIndex, rowEnergy.length);
+	value = parseInt(value);
+	var superScripted = rowEnergy.substring(0, valueIndex) + "<sup>" + value + "</sup>";
+	return superScripted;
 }
 
 function drawOrbitalDiagram(entrySet, splitConfiguration) {
@@ -462,16 +492,30 @@ function OrbitalDiagram(electrons) {
             return null;
         }
     }
-    this.getNobleGasConfiguration = function(fullConfiguration) {
-        var nobleGasConfiguration = "Non Existant";
-        for (var x = (this.nobleGasRowEnergies.length - 1); x != -1; x--) {
-            var currentNobleGasRowEnergy = this.nobleGasRowEnergies[x];
-            if (fullConfiguration.indexOf(currentNobleGasRowEnergy) > -1) {
-                nobleGasConfiguration = "[" + this.nobleGasNames[x] + "] " + fullConfiguration.substring(fullConfiguration.indexOf(currentNobleGasRowEnergy) + 3, fullConfiguration.length);
-                break;
-            }
-        }
-        return nobleGasConfiguration;
+    this.getNobleGasConfiguration = function(splitConfiguration) {
+		var nobleGas = "";
+		var followingRowEnergies = new Array();
+		for(var i = (splitConfiguration.length -1);i != -1;i--){
+			var currentRowEnergy = splitConfiguration[i];
+			
+			for(var x = (this.nobleGasRowEnergies.length - 1); x != -1; x--){
+				var currentNobleGasRowEnergy = this.nobleGasRowEnergies[x];
+				if(currentRowEnergy == currentNobleGasRowEnergy){
+					nobleGas = this.nobleGasNames[x];
+					break;
+				}
+			}
+			if(nobleGas == ''){
+				followingRowEnergies.push(currentRowEnergy);
+			}else{
+				break;
+			}
+		}
+		if(nobleGas == ""){
+			return 0;
+		}else{
+			return [nobleGas, followingRowEnergies.reverse()];
+		}
     }
 
     this.getLazyConfiguration = function(configuration) {
