@@ -44,6 +44,15 @@ h4,p,h2,h5{
 #elementAbbreviation{
     color: #A8D4E3;
 }
+
+.creditRow {
+	margin-top: 10%;
+	width: 100%;
+	height: 24px;
+	text-align: center;
+	color: #fff;
+	background-color: #373A3C;
+}
 </style>
 </head>
 <body>
@@ -66,6 +75,7 @@ h4,p,h2,h5{
 	<canvas id="orbitalDiagram"></canvas>
   </div>
 </div>
+<div class="creditRow">Andre Ruegg - <a href="https://github.com/MasterBugPatch/ElementConfiguration">Open Source</a> licensed under <b>The MIT License (MIT)</b></div>
 </body>
 <footer>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
