@@ -29,7 +29,7 @@ $(document).ready(function() {
 });
 
 function loadElementInformation() {
-    $.get("http://mbp.link/element/elements.txt", function(txt) {
+    $.get("./elements.txt", function(txt) {
         var lines = txt.split("\n");
         for (var i = 0, len = lines.length; i < len; i++) {
             var line = lines[i];
@@ -159,7 +159,7 @@ function createInformation(information) {
 	}else{
 		nobleGasConfiguration = "Not available on this element";
 	}
-	
+
     var lazyConfiguration = getStringFromArray(superScriptConfigurationArray(ob.getLazyConfiguration(splitConfiguration)));
 
     $("#fullConfiguration").html(getStringFromArray(superScriptConfigurationArray(splitConfiguration)));
@@ -521,7 +521,7 @@ function OrbitalDiagram(electrons) {
 		var followingRowEnergies = new Array();
 		for(var i = (splitConfiguration.length -1);i != -1;i--){
 			var currentRowEnergy = splitConfiguration[i];
-			
+
 			for(var x = (this.nobleGasRowEnergies.length - 1); x != -1; x--){
 				var currentNobleGasRowEnergy = this.nobleGasRowEnergies[x];
 				if(currentRowEnergy == currentNobleGasRowEnergy){
